@@ -15,6 +15,8 @@ from flask import url_for
 from authlib.flask.client import OAuth
 from six.moves.urllib.parse import urlencode
 
+import http.client
+
 import constants
 
 ENV_FILE = find_dotenv()
@@ -29,6 +31,10 @@ AUTH0_BASE_URL = 'https://' + AUTH0_DOMAIN
 AUTH0_AUDIENCE = env.get(constants.AUTH0_AUDIENCE)
 if AUTH0_AUDIENCE is '':
     AUTH0_AUDIENCE = AUTH0_BASE_URL + '/userinfo'
+
+ACCTMGR_HOST = env.get(constants.ACCTMGR_HOST)
+ACCTMGR_RESTPORT = env.get(constants.ACCTMGR_RESTPORT)
+
 
 app = Flask(__name__, static_url_path='/public', static_folder='./public')
 app.secret_key = constants.SECRET_KEY
@@ -75,7 +81,9 @@ def home():
 
 @app.route('/callback')
 def callback_handling():
-    auth0.authorize_access_token()
+    token = auth0.authorize_access_token()
+    atoken = token['access_token']
+
     resp = auth0.get('userinfo')
     userinfo = resp.json()
 
@@ -85,6 +93,12 @@ def callback_handling():
         'name': userinfo['name'],
         'picture': userinfo['picture']
     }
+    session[constants.ATOKEN] = atoken
+
+    project_full_name = 'zs-haraszti-gmail-com/first'
+    ptoken = fetch_ptoken(token['access_token'], project_full_name)
+    session[constants.PTOKEN] = ptoken
+
     return redirect('/dashboard')
 
 
@@ -105,8 +119,27 @@ def logout():
 def dashboard():
     return render_template('dashboard.html',
                            userinfo=session[constants.PROFILE_KEY],
-                           userinfo_pretty=json.dumps(session[constants.JWT_PAYLOAD], indent=4))
+                           userinfo_pretty=json.dumps(session[constants.JWT_PAYLOAD], indent=4),
+                           atoken=session[constants.ATOKEN],
+                           ptoken=session[constants.PTOKEN])
+
+
+def fetch_ptoken(atoken, project_full_name):
+    connection = http.client.HTTPConnection('%s:%s' % (ACCTMGR_HOST, ACCTMGR_RESTPORT))
+    headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'bearer ' + atoken,
+    }
+    api = '/projects/%s/token' % project_full_name
+    connection.request('POST', api, None, headers)
+
+    response = connection.getresponse()
+    res_body = response.read().decode()
+    res_data = json.loads(res_body)
+    ptoken = res_data['token']
+
+    return ptoken
 
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=env.get('PORT', 3000))
+    app.run(host='0.0.0.0', port=env.get('PORT', 3001))

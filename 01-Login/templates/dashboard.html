@@ -14,7 +14,11 @@
                     <h1 id="logo"><img src="//cdn.auth0.com/samples/auth0_logo_final_blue_RGB.png" /></h1>
                     <img class="avatar" src="{{userinfo['picture']}}"/>
                     <h2>Welcome {{userinfo['name']}}</h2>
-                    <pre>{{userinfo_pretty}}</pre>
+                    <pre>{{ userinfo_pretty }}</pre>
+                    <p>User's access token:</p>
+                    <pre>{{ atoken }}</pre>
+                    <p>User's project token:</p>
+                    <pre>{{ ptoken }}</pre>
                     <a id="qsLogoutBtn" class="btn btn-primary btn-lg btn-logout btn-block" href="/logout">Logout</a>
                 </div>
             </div>

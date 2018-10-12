@@ -1,5 +1,12 @@
 # Auth0 Python Web App
 
+This is a modified version of an Auth0 sample app, modified to show how to obtain an auth0 access token and also
+a Cerra project token in the same app.
+
+See the 01-login/README.md file for further instructions.
+
+## Original content of this README:
+
 [![CircleCI](https://circleci.com/gh/auth0-samples/auth0-python-web-app.svg?style=svg)](https://circleci.com/gh/auth0-samples/auth0-python-web-app)
 
 This sample demonstrates how to add authentication to a Python web app using Auth0.

@@ -1,6 +1,23 @@
 # Auth0 Python Web App Sample
 
-This sample demonstrates how to add authentication to a Python web app using Auth0.
+The original sample was modified/extended by Zsolt so that it demonstrates how to obtain a usable
+access token from auth0 and then how to use that access token to obtain a project token for the
+user.
+
+Assumptions:
+
+- You will use your own auth0 credentials to log in
+- You started acctmgr locally
+- You followed the TESTING.md tutorial in hq-acctmgr and created a project, called 'first'. If you have a project
+  with a different name, you can use that, but you need to change one line in server.py.
+- The acctmgr REST API is reachable at localhost:3000. If you have a different access point, change the respective
+  paramater(s) in .env
+- After you copied .env.example to .env, opened the file, and copied the actual client secret for the client id
+  shown there.
+
+/Zsolt
+
+Original text:
 
 # Running the App
 
@@ -10,11 +27,11 @@ Rename `.env.example` to `.env` and populate it with the client ID, domain, secr
 Auth0 app. If you are not implementing any API you can use `https://YOUR_DOMAIN.auth0.com/userinfo` as the audience. 
 Also, add the callback URL to the settings section of your Auth0 client.
 
-Register `http://localhost:3000/callback` as `Allowed Callback URLs` and `http://localhost:3000` 
+Register `http://localhost:3001/callback` as `Allowed Callback URLs` and `http://localhost:3001` 
 as `Allowed Logout URLs` in your client settings.
 
 Run `pip install -r requirements.txt` to install the dependencies and run `python server.py`. 
-The app will be served at [http://localhost:3000/](http://localhost:3000/).
+The app will be served at [http://localhost:3001/](http://localhost:3001/).
 
 # Running the App with Docker
 
